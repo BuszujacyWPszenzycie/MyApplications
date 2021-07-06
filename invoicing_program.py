@@ -8,7 +8,7 @@ root.geometry("400x400")
 
 #Towrzenie przycisku do dodawania klienta oraz ustawienie go na pierwszym ekranie
 add_customer = Button(root, text = "Dodaj kontrahenta", command = lambda: add_customer_def())
-add_customer.grid(row = 0, column = 0)
+add_customer.grid(row = 0, column = 0, sticky = W)
 
 #Utwórz bazę danych
 conn = sqlite3.connect("invoicing_program_database.db")
@@ -28,34 +28,6 @@ c = conn.cursor()
 			city text,
 			country text
 			)""")'''
-
-
-show_customers = Button(root, text = "Pokaż kontrahentów", command = lambda: show())
-show_customers.grid(row = 1, column = 0)
-
-def show():
-	#Połącz z bazą danych
-	conn = sqlite3.connect("invoicing_program_database.db")
-	#Stwórz kursor
-	c = conn.cursor()
-
-	c.execute("SELECT *, oid FROM kontrahenci")
-	records = c.fetchall()
-
-	#Loop Thru Results
-	print_records = ""
-	for record in records:
-		print_records += str(record[0]) + "\n"
-
-	query_label = Label(root, text = print_records)
-	query_label.grid(row = 2, column = 0, columnspan = 2)
-
-
-	#Commit changes
-	conn.commit()
-	#Cloce connection
-	conn.close()
-
 
 #Definicja do przycisku "dodaj kontrahenta"
 def add_customer_def():
@@ -179,6 +151,15 @@ def add_customer_def():
 
 
 	return
+
+c.execute("SELECT *, oid FROM kontrahenci")
+records = c.fetchall()
+
+clicked = StringVar()
+clicked.set(records[0])
+
+drop = OptionMenu(root, clicked, *records)
+drop.grid(row = 2, column = 0)
 
 #Wprowadź zmiany
 conn.commit()
